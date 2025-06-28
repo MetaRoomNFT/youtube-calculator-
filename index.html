@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta tags will be updated by JS -->
+    <title>YouTube 频道收益计算器 | YouTuber 收入估算 & 创作者增长工具</title>
+    <meta name="description" content="免费估算任何 YouTube 频道的广告收入。我们的工具为内容创作者和 YouTuber 提供月度和年度收益分析，并利用 AI 提供频道增长和视频变现策略。">
+    <meta name="keywords" content="YouTube收益计算器, YouTuber收入, 内容创作者, 频道估值, 视频变现, 网红营销, CPM, RPM, 广告收入, 频道增长">
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-xxxxxxxxxxxxxxxx"
+     crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .main-gradient-text {
+            background: linear-gradient(to right, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        /* Make dropdown scrollable */
+        #lang-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex items-center justify-center min-h-screen py-10 px-4">
+
+    <main class="w-full max-w-3xl mx-auto">
+        
+        <!-- Language Switcher -->
+        <div class="flex justify-end mb-4">
+            <div class="relative lang-selector">
+                <button id="lang-btn" class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-lg border border-slate-200 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                    <span id="lang-btn-text">语言</span>
+                </button>
+                <div id="lang-dropdown" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border z-10">
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="en">English</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="zh-CN">简体中文</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="es">Español</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="fr">Français</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="ar">العربية</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="ru">Русский</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="pt">Português</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="ja">日本語</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100" data-lang="ko">한국어</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold main-gradient-text" data-translate-key="mainTitle"></h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-xl mx-auto" data-translate-key="mainSubtitle"></p>
+        </div>
+        
+        <!-- Main Input Card -->
+        <div class="card p-6 md:p-8 rounded-2xl shadow-lg mb-10">
+            <!-- Google AdSense Placeholder Area -->
+            <div class="mb-6 text-center">
+                <div class="w-full h-24 bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center rounded-lg">
+                    <span class="text-slate-500 text-sm">Google AdSense - Ad Area</span>
+                </div>
+            </div>
+
+            <div>
+                <label for="youtube-url" class="block text-sm font-semibold text-slate-700 mb-2" data-translate-key="channelUrlLabel"></label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="youtube-url" class="flex-grow w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition" data-translate-key-placeholder="channelUrlPlaceholder">
+                    <button id="calculate-btn" class="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold px-8 py-3 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 transition-transform transform hover:scale-105">
+                        <span id="btn-text" data-translate-key="calculateButton"></span>
+                        <span id="btn-loader" class="hidden">
+                             <svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <p id="error-message" class="text-red-500 text-sm mt-3 hidden"></p>
+        </div>
+
+        <!-- Partner Ad Section -->
+        <div class="my-12">
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <a href="https://jimeng.jianying.com/" target="_blank" rel="noopener noreferrer" class="group block p-5 card rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <h4 class="font-semibold text-slate-800 group-hover:main-gradient-text" data-translate-key="ad1Title"></h4>
+                </a>
+                <a href="https://veo3.ai/dashboard" target="_blank" rel="noopener noreferrer" class="group block p-5 card rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <h4 class="font-semibold text-slate-800 group-hover:main-gradient-text" data-translate-key="ad2Title"></h4>
+                </a>
+                <a href="https://lovable.dev/" target="_blank" rel="noopener noreferrer" class="group block p-5 card rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <h4 class="font-semibold text-slate-800 group-hover:main-gradient-text" data-translate-key="ad3Title"></h4>
+                </a>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-container" class="card p-6 md:p-8 rounded-2xl shadow-lg">
+            <h2 class="text-3xl font-bold text-center text-slate-800 mb-8" data-translate-key="resultsTitle"></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="p-6 bg-slate-50/50 rounded-xl border border-slate-200 text-center">
+                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wider" data-translate-key="monthlyEarningsLabel"></p>
+                    <p id="monthly-earnings" class="text-4xl font-bold text-green-600 mt-2">-</p>
+                </div>
+                <div class="p-6 bg-slate-50/50 rounded-xl border border-slate-200 text-center">
+                    <p class="text-sm font-medium text-slate-500 uppercase tracking-wider" data-translate-key="yearlyEarningsLabel"></p>
+                    <p id="yearly-earnings" class="text-4xl font-bold text-green-700 mt-2">-</p>
+                </div>
+            </div>
+            <p id="disclaimer" class="text-xs text-slate-500 text-center"></p>
+
+            <!-- AI Growth Section - Initially Hidden -->
+            <div id="ai-growth-section" class="hidden">
+                <div class="text-center mt-10">
+                    <button id="gemini-btn" class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold px-8 py-3 rounded-lg hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-transform transform hover:scale-105">
+                        <span data-translate-key="geminiButton"></span> ✨
+                    </button>
+                </div>
+                <div id="gemini-results-container" class="mt-8 p-6 bg-white border border-slate-200 rounded-xl hidden">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4" data-translate-key="geminiTitle"></h3>
+                    <div id="gemini-loader" class="flex items-center justify-center py-4 hidden">
+                         <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="ml-3 text-slate-600" data-translate-key="geminiLoading"></p>
+                    </div>
+                    <div id="gemini-content" class="prose prose-slate max-w-none"></div>
+                    <p id="gemini-error-message" class="text-red-500 text-sm mt-2 hidden"></p>
+                    <div id="more-suggestions-wrapper" class="text-center mt-6 hidden">
+                        <button id="more-suggestions-btn" class="text-sm font-semibold text-cyan-600 hover:text-cyan-800">
+                            <span data-translate-key="moreSuggestionsButton"></span> →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sections Wrapper -->
+        <div class="mt-12 space-y-12">
+            <!-- History Section -->
+            <div id="history-section" class="card p-6 md:p-8 rounded-2xl shadow-lg hidden">
+                <div class="flex justify-between items-center cursor-pointer" id="history-header">
+                    <h2 class="text-2xl font-bold text-slate-800" data-translate-key="historyTitle"></h2>
+                    <button id="toggle-history-btn" class="p-1 rounded-full hover:bg-slate-200 transition">
+                         <svg id="history-toggle-icon" class="w-6 h-6 text-slate-600 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="history-content" class="space-y-6 mt-6"></div>
+            </div>
+
+             <!-- Creator Tools Section -->
+            <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                <h2 class="text-2xl font-bold text-center text-slate-800 mb-6" data-translate-key="creatorSectionTitle"></h2>
+                <a href="https://monica.im/" target="_blank" rel="noopener noreferrer" class="group block p-6 bg-gradient-to-r from-teal-50 to-cyan-100 border border-teal-200 rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <h4 class="font-bold text-xl text-teal-800 group-hover:text-cyan-700" data-translate-key="creatorToolTitle"></h4>
+                    <p class="text-slate-600 mt-2" data-translate-key="creatorSectionDesc"></p>
+                </a>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="card p-6 md:p-8 rounded-2xl shadow-lg">
+                <div class="flex justify-between items-center cursor-pointer" id="faq-header">
+                    <h2 class="text-2xl font-bold text-slate-800" data-translate-key="faqTitle"></h2>
+                     <button id="toggle-faq-btn" class="p-1 rounded-full hover:bg-slate-200 transition">
+                         <svg id="faq-toggle-icon" class="w-6 h-6 text-slate-600 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="faq-content" class="space-y-6 mt-6">
+                    <div class="faq-item border-b border-slate-200 pb-4">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq1_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq1_a"></p>
+                    </div>
+                    <div class="faq-item border-b border-slate-200 pb-4">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq2_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq2_a"></p>
+                    </div>
+                    <div class="faq-item border-b border-slate-200 pb-4">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq3_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq3_a"></p>
+                    </div>
+                    <div class="faq-item border-b border-slate-200 pb-4">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq4_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq4_a"></p>
+                    </div>
+                    <div class="faq-item border-b border-slate-200 pb-4">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq5_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq5_a"></p>
+                    </div>
+                    <div class="faq-item border-b border-slate-200 pb-4">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq6_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq6_a"></p>
+                    </div>
+                    <div class="faq-item border-b border-slate-200 pb-4">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq7_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq7_a"></p>
+                    </div>
+                    <div class="faq-item">
+                        <h3 class="font-semibold text-slate-800" data-translate-key="faq8_q"></h3>
+                        <p class="mt-2 text-slate-600" data-translate-key="faq8_a"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const translations = {
+            'en': {
+                langBtnText: 'English', mainTitle: 'YouTube Creator Revenue Estimator', mainSubtitle: 'Paste a channel link to analyze YouTuber ad revenue potential and get AI-driven growth strategies.', channelUrlLabel: 'YouTube Channel URL', channelUrlPlaceholder: 'e.g., https://www.youtube.com/@MrBeast', calculateButton: 'Calculator', ad1Title: 'Jianying Pro - Desktop Video Editor', ad2Title: 'Veo3 AI - Generate Videos with AI', ad3Title: 'Lovable - AI Software Engineers', creatorSectionTitle: 'Creator Tools', creatorToolTitle: 'Monica - Your All-in-One AI Assistant', creatorSectionDesc: 'Click to explore a powerful AI tool that helps with scriptwriting, inspiration, and content creation.', resultsTitle: 'Revenue Potential Analysis', monthlyEarningsLabel: 'Est. Monthly Ad Revenue', yearlyEarningsLabel: 'Est. Yearly Ad Revenue', disclaimerApi: '*Disclaimer: Based on public channel data & industry models. Actual revenue varies.', disclaimerFallback: '*Notice: Real-time data unavailable. Estimate is based on a consistent model.', geminiButton: 'Get AI Growth Strategy', moreSuggestionsButton: 'Get More Suggestions', geminiTitle: '📈 AI-Powered Growth Tips', geminiLoading: 'Generating personalized tips...', geminiError: 'Sorry, an error occurred while fetching suggestions.', faqTitle: 'Frequently Asked Questions', historyTitle: 'Suggestion History',
+                faq1_q: 'How accurate is this calculator?', faq1_a: 'Our tool uses public API data for estimation when available, otherwise falling back to a consistent model. It\'s an excellent reference, but real income varies due to many factors.',
+                faq2_q: 'What are CPM and RPM?', faq2_a: 'CPM (Cost Per Mille) is what advertisers pay per 1,000 ad views. RPM (Revenue Per Mille) is a creator\'s total revenue per 1,000 video views, after YouTube\'s share. Better content and audience location can increase RPM.',
+                faq3_q: 'How else do YouTubers make money?', faq3_a: 'Top creators diversify with sponsorships, merchandise, affiliate marketing, channel memberships, live-stream tipping (Super Chat), and YouTube Premium revenue.',
+                faq4_q: 'How long to start earning money?', faq4_a: 'To join the YouTube Partner Program (YPP), you need 1,000 subscribers and either 4,000 watch hours (last 12 months) or 10 million Shorts views (last 90 days).',
+                faq5_q: 'Do more subscribers mean more money?', faq5_a: 'Not directly. Income is from views. However, more subscribers usually lead to more views, boosting revenue potential and showing a loyal audience.',
+                faq6_q: 'Are YouTube Shorts profitable?', faq6_a: 'Yes. YPP creators earn from ads in the Shorts Feed. Revenue is shared based on a creator\'s portion of total Shorts views, making it a growing income source.',
+                faq7_q: 'What content earns the most?', faq7_a: 'High-CPM niches like finance, tech, and business attract higher-paying ads. Audiences in countries like the US, UK, and Canada also lead to higher RPMs.',
+                faq8_q: 'How does YouTube pay?', faq8_a: 'Through Google AdSense. Once you hit the payment threshold (e.g., $100 in the US), AdSense pays out the following month, typically via direct deposit.',
+                metaDescription: 'Estimate any YouTube channel\'s ad revenue for free. Our tool provides monthly and yearly earnings analysis for content creators and YouTubers, and offers AI-powered strategies for channel growth and video monetization.', metaKeywords: 'YouTube revenue calculator, YouTuber income, content creator, channel valuation, video monetization, influencer marketing, CPM, RPM, ad revenue, channel growth'
+            },
+            'zh-CN': {
+                langBtnText: '简体中文', mainTitle: 'YouTube 创作者收入估算器', mainSubtitle: '输入频道链接，即刻分析 YouTuber 广告收入潜力，并获取由 AI 驱动的专属频道增长与内容变现策略。', channelUrlLabel: 'YouTube 频道链接', channelUrlPlaceholder: '例如: https://www.youtube.com/@MrBeast', calculateButton: '计算器', ad1Title: '剪映专业版 - 全能易用的桌面端剪辑软件', ad2Title: 'Veo3 AI - 用AI生成视频', ad3Title: 'Lovable - AI 软件工程师', creatorSectionTitle: '创作者工具', creatorToolTitle: 'Monica - 您的全能AI助手', creatorSectionDesc: '点击探索强大的AI工具，助您轻松完成脚本撰写、灵感激发和内容创作。', resultsTitle: '频道收入潜力分析', monthlyEarningsLabel: '预估月度广告收入', yearlyEarningsLabel: '预估年度广告收入', disclaimerApi: '*重要提示: 此估算基于频道的公开数据及行业模型，实际收入受多种因素影响，仅供参考。', disclaimerFallback: '*提示: 实时数据获取失败，当前为模型估算结果，同一链接结果将保持一致。', geminiButton: '获取 AI 增长策略', moreSuggestionsButton: '获取更多建议', geminiTitle: '📈 AI 驱动的增长与变现建议', geminiLoading: '正在生成专属增长策略...', geminiError: '抱歉，获取建议时出错，请稍后再试。', faqTitle: '常见问题 (FAQ)', historyTitle: '历史建议',
+                faq1_q: '这个收益计算器准确吗？', faq1_a: '我们的工具会优先尝试通过公开API获取实时数据估算，失败时则采用固定模型。它是一个优秀的参考，但真实收入会因多种因素波动。',
+                faq2_q: '什么是CPM和RPM？', faq2_a: 'CPM 是广告主为每一千次广告展示支付的费用。RPM 是创作者从每一千次视频观看中获得的实际总收入（YouTube分成后）。提升内容质量和观众地区可以有效提高RPM。',
+                faq3_q: 'YouTuber还有哪些变现方式？', faq3_a: '成功的创作者会通过品牌赞助、销售商品、联盟营销、频道会员、直播打赏（Super Chat）和YouTube Premium订阅分成等方式实现收入多元化。',
+                faq4_q: '在YouTube上赚钱需要多久？', faq4_a: '加入YouTube合作伙伴计划(YPP)需要1000名订阅者，以及过去12个月内4000小时的观看时长，或过去90天内1000万次Shorts观看。',
+                faq5_q: '订阅者越多收入就越高吗？', faq5_a: '不完全是。收入主要来自观看次数。但更多订阅者通常意味着更高的观看量，从而增加收入潜力，并代表了忠实的观众群体。',
+                faq6_q: 'YouTube Shorts短视频能赚钱吗？', faq6_a: '能。YPP创作者可以从Shorts动态中的广告获得收入。收入根据创作者的观看量份额进行分配，是一个不断增长的变现渠道。',
+                faq7_q: '什么样的内容最赚钱？', faq7_a: '金融、科技、商业等高CPM领域的内容能吸引更高价值的广告。同时，来自美国、英国等发达国家观众的视频通常RPM也更高。',
+                faq8_q: 'YouTube如何付款？', faq8_a: '通过Google AdSense支付。当收入达到付款门槛（如美国为$100）后，AdSense会在次月通过银行转账等方式支付。',
+                metaDescription: '免费估算任何 YouTube 频道的广告收入。我们的工具为内容创作者和 YouTuber 提供月度和年度收益分析，并利用 AI 提供频道增长和视频变现策略。', metaKeywords: 'YouTube收益计算器, YouTuber收入, 内容创作者, 频道估值, 视频变现, 网红营销, CPM, RPM, 广告收入, 频道增长'
+            },
+            'ja': {
+                langBtnText: '日本語', mainTitle: 'YouTubeクリエイター収益計算機', mainSubtitle: 'チャンネルのリンクを貼り付けて、YouTuberの広告収益ポテンシャルを分析し、AIによる成長戦略を手に入れましょう。', channelUrlLabel: 'YouTubeチャンネルURL', channelUrlPlaceholder: '例: https://www.youtube.com/@MrBeast', calculateButton: '計算ツール', ad1Title: 'Jianying Pro - 動画編集ソフト', ad2Title: 'Veo3 AI - AI動画生成', ad3Title: 'Lovable - AIソフトウェアエンジニア', creatorSectionTitle: 'クリエイターツール', creatorToolTitle: 'Monica - あなたのAIアシスタント', creatorSectionDesc: 'クリックして、脚本作成、インスピレーション、コンテンツ作成に役立つ強力なAIツールを探索してください。', resultsTitle: '収益ポテンシャル分析', monthlyEarningsLabel: '推定月間広告収益', yearlyEarningsLabel: '推定年間広告収益', disclaimerApi: '※免責事項：公開データと業界モデルに基づく試算です。実際の収益は変動します。', disclaimerFallback: '※お知らせ：リアルタイムデータ取得失敗。モデルに基づく一貫した試算結果です。', geminiButton: 'AI成長戦略を取得', moreSuggestionsButton: 'さらに提案を取得', geminiTitle: '📈 AIによる成長ヒント', geminiLoading: 'ヒントを生成中...', geminiError: '申し訳ありませんが、エラーが発生しました。', faqTitle: 'よくある質問', historyTitle: '提案履歴',
+                faq1_q: 'この計算機の精度は？', faq1_a: '当ツールは公開APIデータを優先的に使用し、利用不可の場合は固定モデルに切り替えます。これは参考値であり、実際の収入は変動します。',
+                faq2_q: 'CPMとRPMとは？', faq2_a: 'CPMは広告主が1000回表示に支払う料金です。RPMはクリエイターが1000回再生あたりに得る実際の収益です。コンテンツの質と視聴者の地域がRPMに影響します。',
+                faq3_q: '他の収益化方法は？', faq3_a: 'トップクリエイターは、スポンサーシップ、商品販売、アフィリエイト、メンバーシップ、Super Chat、YouTube Premiumの分配金などで収入を多様化しています。',
+                faq4_q: '収益化までの期間は？', faq4_a: 'YPP参加には、登録者1000人、及び過去12ヶ月の総再生時間4000時間または過去90日間のショート動画再生1000万回が必要です。',
+                faq5_q: '登録者数と収入の関係は？', faq5_a: '直接的ではありません。収入は再生回数から得られますが、登録者が多いほど再生回数が増え、収益の可能性が高まります。',
+                faq6_q: 'YouTubeショートは収益になりますか？', faq6_a: 'はい。YPPクリエイターはショートフィードの広告から収益を得ます。収益は再生回数のシェアに基づいて分配されます。',
+                faq7_q: '最も稼げるコンテンツは？', faq7_a: '金融、テクノロジー、ビジネスなどの高CPMニッチは高単価の広告を引きつけます。また、米国などの先進国の視聴者は高いRPMをもたらします。',
+                faq8_q: 'YouTubeの支払い方法は？', faq8_a: 'Google AdSense経由です。支払い基準額（例：米国で100ドル）に達すると、翌月に銀行振込などで支払われます。',
+                metaDescription: 'YouTubeチャンネルの広告収益を無料で計算します。当ツールは、コンテンツ制作者やYouTuber向けに月次および年次の収益分析を提供し、チャンネルの成長と動画の収益化のためのAIを活用した戦略を提案します。', metaKeywords: 'YouTube収益計算機, YouTuber収入, コンテンツ制作者, チャンネル評価, 動画収益化, インフルエンサーマーケティング, CPM, RPM, 広告収入, チャンネル成長'
+            },
+            'es': {
+                langBtnText: 'Español', mainTitle: 'Estimador de Ingresos para Creadores de YouTube', mainSubtitle: 'Pega el enlace de un canal para analizar el potencial de ingresos por publicidad y obtener estrategias de crecimiento con IA.', channelUrlLabel: 'URL del Canal de YouTube', channelUrlPlaceholder: 'ej: https://www.youtube.com/@MrBeast', calculateButton: 'Calculadora', ad1Title: 'Jianying Pro - Editor de Video', ad2Title: 'Veo3 AI - Generar Videos con IA', ad3Title: 'Lovable - Ingenieros de Software IA', creatorSectionTitle: 'Herramientas para Creadores', creatorToolTitle: 'Monica - Tu Asistente de IA Todo en Uno', creatorSectionDesc: 'Haz clic para explorar una potente herramienta de IA que ayuda con la escritura de guiones, inspiración y creación de contenido.', resultsTitle: 'Análisis de Potencial de Ingresos', monthlyEarningsLabel: 'Ingresos Mensuales Estimados', yearlyEarningsLabel: 'Ingresos Anuales Estimados', disclaimerApi: '*Aviso: Esta estimación se basa en datos públicos del canal y modelos de la industria. Los ingresos reales varían.', disclaimerFallback: '*Aviso: Fallo al obtener datos en tiempo real. La estimación se basa en un modelo consistente.', geminiButton: 'Obtener Estrategia de IA', moreSuggestionsButton: 'Obtener más sugerencias', geminiTitle: '📈 Consejos de Crecimiento con IA', geminiLoading: 'Generando consejos...', geminiError: 'Lo sentimos, ocurrió un error al obtener sugerencias.', faqTitle: 'Preguntas Frecuentes', historyTitle: 'Historial de Sugerencias',
+                faq1_q: '¿Qué tan preciso es este calculador?', faq1_a: 'Nuestra herramienta utiliza datos de API públicas para la estimación cuando es posible. Es una excelente referencia, pero los ingresos reales varían.',
+                faq2_q: '¿Qué son CPM y RPM?', faq2_a: 'CPM es lo que los anunciantes pagan por 1,000 impresiones de anuncios. RPM son los ingresos totales de un creador por 1,000 vistas de video, después de la parte de YouTube.',
+                faq3_q: '¿De qué otras formas ganan dinero los YouTubers?', faq3_a: 'Los creadores diversifican con patrocinios, mercancía, marketing de afiliados, membresías del canal, Super Chat y los ingresos de YouTube Premium.',
+                faq4_q: '¿Cuánto tiempo se tarda en empezar a ganar dinero?', faq4_a: 'Para unirse al YPP, necesitas 1,000 suscriptores y 4,000 horas de visualización (últimos 12 meses) o 10 millones de vistas de Shorts (últimos 90 días).',
+                faq5_q: '¿Más suscriptores significan más dinero?', faq5_a: 'No directamente. Los ingresos provienen de las vistas. Sin embargo, más suscriptores suelen generar más vistas, lo que aumenta el potencial de ingresos.',
+                faq6_q: '¿Son rentables los YouTube Shorts?', faq6_a: 'Sí. Los creadores del YPP ganan dinero con los anuncios en el feed de Shorts. Los ingresos se reparten en función de la cuota de visualizaciones de un creador.',
+                faq7_q: '¿Qué contenido genera más ingresos?', faq7_a: 'Nichos de alto CPM como finanzas, tecnología y negocios atraen a anunciantes que pagan más. Las audiencias en países como EE. UU. y Reino Unido también generan RPM más altos.',
+                faq8_q: '¿Cómo paga YouTube?', faq8_a: 'A través de Google AdSense. Una vez que alcanzas el umbral de pago (por ejemplo, 100 dólares en EE. UU.), AdSense paga al mes siguiente.'
+            },
+            'fr': {
+                langBtnText: 'Français', mainTitle: 'Estimateur de Revenus pour Créateurs YouTube', mainSubtitle: 'Collez le lien d\'une chaîne pour analyser le potentiel de revenus publicitaires et obtenir des stratégies de croissance par IA.', channelUrlLabel: 'URL de la Chaîne YouTube', channelUrlPlaceholder: 'ex: https://www.youtube.com/@MrBeast', calculateButton: 'Calculatrice', ad1Title: 'Jianying Pro - Éditeur Vidéo', ad2Title: 'Veo3 AI - Générer des Vidéos avec l\'IA', ad3Title: 'Lovable - Ingénieurs Logiciels IA', creatorSectionTitle: 'Outils pour Créateurs', creatorToolTitle: 'Monica - Votre Assistant IA Tout-en-Un', creatorSectionDesc: 'Cliquez pour explorer un puissant outil d\'IA qui aide à l\'écriture de scénarios, à l\'inspiration et à la création de contenu.', resultsTitle: 'Analyse du Potentiel de Revenus', monthlyEarningsLabel: 'Revenus Mensuels Estimés', yearlyEarningsLabel: 'Revenus Annuels Estimés', disclaimerApi: '*Avis: Cette estimation est basée sur les données publiques de la chaîne et des modèles de l\'industrie. Les revenus réels varient.', disclaimerFallback: '*Avis: Échec de la récupération des données en temps real. L\'estimation est basée sur un modèle cohérent.', geminiButton: 'Stratégie de Croissance IA', moreSuggestionsButton: 'Obtenir plus de suggestions', geminiTitle: '📈 Conseils de Croissance par IA', geminiLoading: 'Génération de conseils...', geminiError: 'Désolé, une erreur est survenue lors de la récupération des suggestions.', faqTitle: 'Questions Fréquemment Posées', historyTitle: 'Historique des suggestions',
+                faq1_q: 'Quelle est la précision de ce calculateur ?', faq1_a: 'Notre outil utilise les données des API publiques pour l\'estimation lorsque cela est possible. C\'est une excellente référence, mais les revenus réels varient.',
+                faq2_q: 'Que sont le CPM et le RPM ?', faq2_a: 'Le CPM est ce que les annonceurs paient pour 1 000 impressions publicitaires. Le RPM correspond aux revenus totaux d\'un créateur pour 1 000 vues de vidéo, après la part de YouTube.',
+                faq3_q: 'Comment les YouTubers gagnent-ils de l\'argent autrement ?', faq3_a: 'Les créateurs diversifient avec des sponsorings, des produits dérivés, du marketing d\'affiliation, des adhésions à la chaîne, le Super Chat et les revenus de YouTube Premium.',
+                faq4_q: 'Combien de temps pour commencer à gagner de l\'argent ?', faq4_a: 'Pour rejoindre le PPY, vous avez besoin de 1 000 abonnés et de 4 000 heures de visionnage (12 derniers mois) ou de 10 millions de vues de Shorts (90 derniers jours).',
+                faq5_q: 'Plus d\'abonnés signifie-t-il plus d\'argent ?', faq5_a: 'Pas directement. Les revenus proviennent des vues. Cependant, plus d\'abonnés entraînent généralement plus de vues, augmentant le potentiel de revenus.',
+                faq6_q: 'Les YouTube Shorts sont-ils rentables ?', faq6_a: 'Oui. Les créateurs du PPY gagnent de l\'argent grâce aux publicités dans le flux Shorts. Les revenus sont partagés en fonction de la part des vues d\'un créateur.',
+                faq7_q: 'Quel contenu rapporte le plus ?', faq7_a: 'Les niches à CPM élevé comme la finance, la technologie et les affaires attirent des annonceurs mieux rémunérés. Les audiences dans des pays comme les États-Unis génèrent également des RPM plus élevés.',
+                faq8_q: 'Comment YouTube paie-t-il ?', faq8_a: 'Via Google AdSense. Une vez que vous atteignez le seuil de paiement (par exemple, 100 $ aux États-Unis), AdSense paie le mois suivant.'
+            },
+            'ar': {
+                langBtnText: 'العربية', mainTitle: 'مُقدِّر أرباح منشئي المحتوى على يوتيوب', mainSubtitle: 'الصق رابط قناة لتحليل إمكانات أرباح الإعلانات والحصول على استراتيجيات نمو مدعومة بالذكاء الاصطناعي.', channelUrlLabel: 'رابط قناة يوتيوب', channelUrlPlaceholder: 'مثال: https://www.youtube.com/@MrBeast', calculateButton: 'آلة حاسبة', ad1Title: 'Jianying Pro - محرر فيديو', ad2Title: 'Veo3 AI - إنشاء فيديوهات بالذكاء الاصطناعي', ad3Title: 'Lovable - مهندسو برمجيات بالذكاء الاصطناعي', creatorSectionTitle: 'أدوات للمبدعين', creatorToolTitle: 'Monica - مساعدك الذكي المتكامل', creatorSectionDesc: 'انقر لاستكشاف أداة ذكاء اصطناعي قوية تساعد في كتابة النصوص والإلهام وإنشاء المحتوى.', resultsTitle: 'تحليل إمكانات الأرباح', monthlyEarningsLabel: 'الأرباح الشهرية المقدرة', yearlyEarningsLabel: 'الأرباح السنوية المقدرة', disclaimerApi: '*إخلاء مسؤولية: يعتمد هذا التقدير على بيانات القناة العامة ونماذج الصناعة. تختلف الإيرادات الفعلية.', disclaimerFallback: '*ملاحظة: فشل جلب البيانات في الوقت الفعلي. يعتمد التقدير على نموذج ثابت.', geminiButton: 'احصل على استراتيجية نمو', moreSuggestionsButton: 'احصل على المزيد من الاقتراحات', geminiTitle: '📈 نصائح نمو مدعومة بالذكاء الاصطناعي', geminiLoading: 'جاري إنشاء النصائح...', geminiError: 'عذراً، حدث خطأ أثناء جلب الاقتراحات.', faqTitle: 'أسئلة شائعة', historyTitle: 'سجل الاقتراحات',
+                faq1_q: 'ما مدى دقة هذه الآلة الحاسبة؟', faq1_a: 'تستخدم أداتنا بيانات API عامة للتقدير كلما أمكن ذلك. إنها مرجع ممتاز، لكن الدخل الحقيقي يختلف.',
+                faq2_q: 'ما هو CPM و RPM؟', faq2_a: 'CPM هو ما يدفعه المعلنون لكل 1000 ظهور للإعلان. RPM هو إجمالي إيرادات المنشئ لكل 1000 مشاهدة فيديو، بعد حصة يوتيوب.',
+                faq3_q: 'كيف يجني اليوتيوبرز المال بطرق أخرى؟', faq3_a: 'ينوع المبدعون مصادر دخلهم من خلال الرعاية، والبضائع، والتسويق بالعمولة، وعضويات القناة، و Super Chat، وإيرادات يوتيوب بريميوم.',
+                faq4_q: 'كم من الوقت يستغرق البدء في كسب المال؟', faq4_a: 'للانضمام إلى برنامج شركاء يوتيوب، تحتاج إلى 1000 مشترك و 4000 ساعة مشاهدة (آخر 12 شهرًا) أو 10 ملايين مشاهدة لـ Shorts (آخر 90 يومًا).',
+                faq5_q: 'هل المزيد من المشتركين يعني المزيد من المال؟', faq5_a: 'ليس بشكل مباشر. يأتي الدخل من المشاهدات. ومع ذلك، يؤدي المزيد من المشتركين عادةً إلى المزيد من المشاهدات، مما يزيد من احتمالية تحقيق الأرباح.',
+                faq6_q: 'هل فيديوهات Shorts مربحة؟', faq6_a: 'نعم. يكسب منشئو المحتوى في برنامج الشركاء من الإعلانات في موجز Shorts. يتم تقاسم الإيرادات بناءً على حصة المنشئ من إجمالي المشاهدات.',
+                faq7_q: 'ما هو المحتوى الذي يحقق أعلى دخل؟', faq7_a: 'تجذب المجالات ذات التكلفة الألفية المرتفعة مثل التمويل والتكنولوجيا والأعمال إعلانات ذات قيمة أعلى. كما تؤدي الجماهير في بلدان مثل الولايات المتحدة إلى زيادة RPM.',
+                faq8_q: 'كيف يدفع يوتيوب؟', faq8_a: 'عبر Google AdSense. بمجرد وصولك إلى حد الدفع (على سبيل المثال، 100 دولار أمريكي)، يدفع AdSense في الشهر التالي.'
+            },
+            'ru': {
+                langBtnText: 'Русский', mainTitle: 'Оценщик Дохода для Авторов YouTube', mainSubtitle: 'Вставьте ссылку на канал, чтобы проанализировать потенциальный доход от рекламы и получить стратегии роста от ИИ.', channelUrlLabel: 'URL Канала YouTube', channelUrlPlaceholder: 'напр: https://www.youtube.com/@MrBeast', calculateButton: 'Калькулятор', ad1Title: 'Jianying Pro - Видеоредактор', ad2Title: 'Veo3 AI - Генерировать видео с помощью ИИ', ad3Title: 'Lovable - Программисты-ИИ', creatorSectionTitle: 'Инструменты для Авторов', creatorToolTitle: 'Monica - Ваш Универсальный ИИ-Ассистент', creatorSectionDesc: 'Нажмите, чтобы изучить мощный инструмент ИИ, который помогает в написании сценариев, поиске вдохновения и создании контента.', resultsTitle: 'Анализ Потенциального Дохода', monthlyEarningsLabel: 'Примерный Месячный Доход', yearlyEarningsLabel: 'Примерный Годовой Доход', disclaimerApi: '*Отказ от ответственности: Эта оценка основана на общедоступных данных канала и средних показателях индустрии. Реальный доход варьируется.', disclaimerFallback: '*Примечание: Не удалось получить данные в реальном времени. Оценка основана на согласованной модели.', geminiButton: 'Получить Стратегию Роста', moreSuggestionsButton: 'Получить еще предложения', geminiTitle: '📈 Советы по Росту от ИИ', geminiLoading: 'Генерация советов...', geminiError: 'К сожалению, при получении предложений произошла ошибка.', faqTitle: 'Часто Задаваемые Вопросы', historyTitle: 'История предложений',
+                faq1_q: 'Насколько точен этот калькулятор?', faq1_a: 'Наш инструмент использует данные общедоступных API для оценки, когда это возможно. Это отличный ориентир, но реальный доход варьируется.',
+                faq2_q: 'Что такое CPM и RPM?', faq2_a: 'CPM - это то, что рекламодатели платят за 1000 показов рекламы. RPM - это общий доход автора за 1000 просмотров видео после доли YouTube.',
+                faq3_q: 'Как еще зарабатывают ютуберы?', faq3_a: 'Авторы диверсифицируют доход за счет спонсорства, товаров, партнерского маркетинга, членства в канале, Super Chat и доходов от YouTube Premium.',
+                faq4_q: 'Сколько времени нужно, чтобы начать зарабатывать?', faq4_a: 'Чтобы присоединиться к YPP, вам нужно 1000 подписчиков и 4000 часов просмотра (за последние 12 месяцев) или 10 миллионов просмотров Shorts (за последние 90 дней).',
+                faq5_q: 'Больше подписчиков - больше денег?', faq5_a: 'Не напрямую. Доход зависит от просмотров. Однако большее количество подписчиков обычно приводит к большему количеству просмотров, увеличивая потенциальный доход.',
+                faq6_q: 'Приносят ли доход YouTube Shorts?', faq6_a: 'Да. Авторы YPP зарабатывают на рекламе в ленте Shorts. Доход распределяется на основе доли просмотров автора.',
+                faq7_q: 'Какой контент приносит больше всего денег?', faq7_a: 'Ниши с высоким CPM, такие как финансы, технологии и бизнес, привлекают более дорогую рекламу. Аудитории в таких странах, как США, также приводят к более высокому RPM.',
+                faq8_q: 'Как платит YouTube?', faq8_a: 'Через Google AdSense. Как только вы достигнете порога оплаты (например, 100 долларов США), AdSense выплатит средства в следующем месяце.'
+            },
+            'pt': {
+                langBtnText: 'Português', mainTitle: 'Estimador de Receita para Criadores do YouTube', mainSubtitle: 'Cole o link de um canal para analisar o potencial de receita de anúncios e obter estratégias de crescimento com IA.', channelUrlLabel: 'URL do Canal do YouTube', channelUrlPlaceholder: 'ex: https://www.youtube.com/@MrBeast', calculateButton: 'Calculadora', ad1Title: 'Jianying Pro - Editor de Vídeo', ad2Title: 'Veo3 AI - Gerar Vídeos com IA', ad3Title: 'Lovable - Engenheiros de Software IA', creatorSectionTitle: 'Ferramentas para Criadores', creatorToolTitle: 'Monica - Seu Assistente de IA Tudo-em-Um', creatorSectionDesc: 'Clique para explorar uma poderosa ferramenta de IA que auxilia na escrita de roteiros, inspiração e criação de conteúdo.', resultsTitle: 'Análise do Potencial de Receita', monthlyEarningsLabel: 'Receita Mensal Estimada', yearlyEarningsLabel: 'Receita Anual Estimada', disclaimerApi: '*Aviso: Esta estimativa baseia-se em dados públicos do canal e modelos da indústria. A receita real varia.', disclaimerFallback: '*Aviso: Falha ao buscar dados em tempo real. A estimativa baseia-se num modelo consistente.', geminiButton: 'Obter Estratégia de IA', moreSuggestionsButton: 'Obter mais sugestões', geminiTitle: '📈 Dicas de Crescimento com IA', geminiLoading: 'A gerar dicas...', geminiError: 'Desculpe, ocorreu um erro ao buscar sugestões.', faqTitle: 'Perguntas Frequentes', historyTitle: 'Histórico de Sugestões',
+                faq1_q: 'Qual é a precisão desta calculadora?', faq1_a: 'A nossa ferramenta utiliza dados de APIs públicas para a estimativa, quando disponíveis. É uma excelente referência, mas o rendimento real varia.',
+                faq2_q: 'O que são CPM e RPM?', faq2_a: 'CPM é o que os anunciantes pagam por 1.000 impressões de anúncios. RPM é a receita total de um criador por 1.000 visualizações de vídeo, após a parte do YouTube.',
+                faq3_q: 'De que outras formas os YouTubers ganham dinheiro?', faq3_a: 'Os criadores diversificam com patrocínios, merchandising, marketing de afiliados, membros do canal, Super Chat e receita do YouTube Premium.',
+                faq4_q: 'Quanto tempo leva para começar a ganhar dinheiro?', faq4_a: 'Para aderir ao YPP, precisa de 1.000 subscritores e 4.000 horas de visualização (últimos 12 meses) ou 10 milhões de visualizações de Shorts (últimos 90 dias).',
+                faq5_q: 'Mais subscritores significam mais dinheiro?', faq5_a: 'Não diretamente. A receita vem das visualizações. No entanto, mais subscritores geralmente levam a mais visualizações, aumentando o potencial de receita.',
+                faq6_q: 'Os YouTube Shorts são rentáveis?', faq6_a: 'Sim. Os criadores do YPP ganham dinheiro com anúncios no feed dos Shorts. A receita é partilhada com base na quota de visualizações de um criador.',
+                faq7_q: 'Que conteúdo rende mais?', faq7_a: 'Nichos de alto CPM, como finanças, tecnologia e negócios, atraem anunciantes que pagam mais. Públicos em países como os EUA также levam a RPMs mais altos.',
+                faq8_q: 'Como é que o YouTube paga?', faq8_a: 'Através do Google AdSense. Assim que atinge o limite de pagamento (por exemplo, 100 dólares nos EUA), o AdSense paga no mês seguinte.'
+            },
+            'ko': {
+                langBtnText: '한국어', mainTitle: 'YouTube 크리에이터 수익 추정기', mainSubtitle: '채널 링크를 붙여넣어 유튜버 광고 수익 잠재력을 분석하고 AI 기반 성장 전략을 받아보세요.', channelUrlLabel: 'YouTube 채널 URL', channelUrlPlaceholder: '예: https://www.youtube.com/@MrBeast', calculateButton: '계산기', ad1Title: 'Jianying Pro - 데스크톱 동영상 편집기', ad2Title: 'Veo3 AI - AI로 동영상 생성', ad3Title: 'Lovable - AI 소프트웨어 엔지니어', creatorSectionTitle: '크리에이터 도구', creatorToolTitle: 'Monica - 당신의 올인원 AI 어시스턴트', creatorSectionDesc: '대본 작성, 영감, 콘텐츠 제작을 돕는 강력한 AI 도구를 살펴보려면 클릭하세요.', resultsTitle: '수익 잠재력 분석', monthlyEarningsLabel: '월 예상 광고 수익', yearlyEarningsLabel: '연간 예상 광고 수익', disclaimerApi: '*면책 조항: 이 추정치는 채널의 공개 데이터 및 업계 모델을 기반으로 하며, 실제 수익은 여러 요인에 따라 달라질 수 있습니다.', disclaimerFallback: '*알림: 실시간 데이터 가져오기에 실패했습니다. 현재 결과는 일관된 모델을 기반으로 한 추정치입니다.', geminiButton: 'AI 성장 전략 받기', moreSuggestionsButton: '더 많은 제안 받기', geminiTitle: '📈 AI 기반 성장 팁', geminiLoading: '맞춤형 팁 생성 중...', geminiError: '죄송합니다. 제안을 가져오는 중 오류가 발생했습니다.', faqTitle: '자주 묻는 질문', historyTitle: '제안 기록',
+                faq1_q: '이 계산기는 얼마나 정확한가요?', faq1_a: '저희 도구는 가능한 경우 공개 API 데이터를 사용하여 추정하며, 불가능할 경우 일관된 모델로 대체합니다. 훌륭한 참고 자료이지만 실제 수입은 여러 요인에 따라 달라집니다.',
+                faq2_q: 'CPM과 RPM은 무엇인가요?', faq2_a: 'CPM은 광고주가 1,000회 광고 노출에 대해 지불하는 비용입니다. RPM은 YouTube의 몫을 제외하고 1,000회 동영상 조회수당 크리에이터가 벌어들이는 총 수익입니다.',
+                faq3_q: '유튜버는 다른 어떤 방법으로 수익을 창출하나요?', faq3_a: '최고의 크리에이터들은 스폰서십, 상품 판매, 제휴 마케팅, 채널 멤버십, 실시간 스트리밍 팁(슈퍼챗), YouTube 프리미엄 수익 등으로 수입을 다각화합니다.',
+                faq4_q: '수익 창출을 시작하는 데 얼마나 걸리나요?', faq4_a: 'YouTube 파트너 프로그램(YPP)에 가입하려면 구독자 1,000명과 지난 12개월간 4,000시간의 시청 시간 또는 지난 90일간 1,000만 회의 쇼츠 조회가 필요합니다.',
+                faq5_q: '구독자가 많을수록 돈을 더 많이 버나요?', faq5_a: '직접적이지는 않습니다. 수입은 조회수에서 나옵니다. 그러나 구독자가 많으면 일반적으로 더 많은 조회수로 이어져 수익 잠재력을 높입니다.',
+                faq6_q: '유튜브 쇼츠는 수익성이 있나요?', faq6_a: '네. YPP 크리에이터는 쇼츠 피드의 광고로 수익을 얻습니다. 수익은 총 쇼츠 조회수 중 크리에이터의 몫에 따라 공유됩니다.',
+                faq7_q: '어떤 콘텐츠가 가장 많은 수익을 올리나요?', faq7_a: '금융, 기술, 비즈니스와 같은 높은 CPM 분야는 더 높은 금액을 지불하는 광고주를 유치합니다. 미국과 같은 국가의 시청자도 더 높은 RPM을 가져옵니다.',
+                faq8_q: '유튜브는 어떻게 지불하나요?', faq8_a: 'Google AdSense를 통해 지급합니다. 지급 기준액(예: 미국에서 100달러)에 도달하면 AdSense에서 다음 달에 지급합니다.',
+                metaDescription: '모든 YouTube 채널의 광고 수익을 무료로 추정하세요. 저희 도구는 콘텐츠 제작자와 유튜버를 위한 월간 및 연간 수익 분석을 제공하고 채널 성장과 동영상 수익화를 위한 AI 기반 전략을 제공합니다。', metaKeywords: 'YouTube 수익 계산기, 유튜버 수입, 콘텐츠 제작자, 채널 가치 평가, 동영상 수익화, 인플루언서 마케팅, CPM, RPM, 광고 수익, 채널 성장'
+            }
+        };
+
+        const supportedLangs = Object.keys(translations);
+        let currentLang;
+        let suggestionHistory = [];
+
+        function setLanguage(lang) {
+            if (!supportedLangs.includes(lang)) {
+                lang = 'en';
+            }
+            currentLang = lang;
+            localStorage.setItem('youtube-calculator-lang', lang);
+            document.documentElement.lang = lang;
+            
+            if (lang === 'ar') {
+                document.documentElement.dir = 'rtl';
+            } else {
+                document.documentElement.dir = 'ltr';
+            }
+            
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.getAttribute('data-translate-key');
+                el.textContent = translations[lang][key] || el.textContent;
+            });
+            document.querySelectorAll('[data-translate-key-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-translate-key-placeholder');
+                el.placeholder = translations[lang][key] || el.placeholder;
+            });
+
+            document.getElementById('lang-btn-text').textContent = translations[lang].langBtnText;
+            document.querySelector('title').textContent = translations[lang].mainTitle;
+            document.querySelector('meta[name="description"]').setAttribute('content', translations[lang].metaDescription);
+            document.querySelector('meta[name="keywords"]').setAttribute('content', translations[lang].metaKeywords);
+        }
+
+        const langSelector = document.querySelector('.lang-selector');
+        const langBtn = document.getElementById('lang-btn');
+        const langDropdown = document.getElementById('lang-dropdown');
+        const urlInput = document.getElementById('youtube-url');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoader = document.getElementById('btn-loader');
+        const errorMessage = document.getElementById('error-message');
+        const resultsContainer = document.getElementById('results-container');
+        const monthlyEarningsEl = document.getElementById('monthly-earnings');
+        const yearlyEarningsEl = document.getElementById('yearly-earnings');
+        const disclaimerEl = document.getElementById('disclaimer');
+        const aiGrowthSection = document.getElementById('ai-growth-section');
+        const geminiBtn = document.getElementById('gemini-btn');
+        const geminiResultsContainer = document.getElementById('gemini-results-container');
+        const geminiLoader = document.getElementById('gemini-loader');
+        const geminiContent = document.getElementById('gemini-content');
+        const geminiErrorMessage = document.getElementById('gemini-error-message');
+        const moreSuggestionsWrapper = document.getElementById('more-suggestions-wrapper');
+        const moreSuggestionsBtn = document.getElementById('more-suggestions-btn');
+        const historySection = document.getElementById('history-section');
+        const historyContent = document.getElementById('history-content');
+        const historyHeader = document.getElementById('history-header');
+        const historyToggleIcon = document.getElementById('history-toggle-icon');
+        const faqHeader = document.getElementById('faq-header');
+        const faqContent = document.getElementById('faq-content');
+        const faqToggleIcon = document.getElementById('faq-toggle-icon');
+        
+        let currentMonthlyEarnings = 0;
+
+        calculateBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            if (!isValidYouTubeUrl(url)) {
+                showError('Please enter a valid YouTube channel URL.');
+                return;
+            }
+            clearError();
+            showLoading(true);
+            aiGrowthSection.classList.add('hidden');
+            geminiResultsContainer.classList.add('hidden');
+            geminiContent.innerHTML = '';
+            
+            monthlyEarningsEl.textContent = '...';
+            yearlyEarningsEl.textContent = '...';
+
+
+            try {
+                const stats = await getChannelStats(url);
+                let earnings;
+
+                if (stats) {
+                    earnings = calculateEarningsFromAPI(stats, url);
+                    disclaimerEl.textContent = translations[currentLang].disclaimerApi;
+                } else {
+                    console.warn("API fetch failed, falling back to estimation model.");
+                    earnings = calculateEarningsFromHash(url);
+                    disclaimerEl.textContent = translations[currentLang].disclaimerFallback;
+                }
+
+                currentMonthlyEarnings = earnings.monthly;
+                displayResults(earnings);
+                aiGrowthSection.classList.remove('hidden');
+
+            } catch (error) {
+                showError(error.message);
+                monthlyEarningsEl.textContent = '-';
+                yearlyEarningsEl.textContent = '-';
+            } finally {
+                showLoading(false);
+            }
+        });
+        
+        geminiBtn.addEventListener('click', () => getGrowthTips(currentMonthlyEarnings, true));
+        moreSuggestionsBtn.addEventListener('click', () => getGrowthTips(currentMonthlyEarnings, false));
+
+        
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.classList.toggle('hidden');
+        });
+
+        langDropdown.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lang = e.target.getAttribute('data-lang');
+            if (lang) {
+                setLanguage(lang);
+                langDropdown.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!langSelector.contains(e.target)) {
+                langDropdown.classList.add('hidden');
+            }
+        });
+
+        historyHeader.addEventListener('click', () => {
+            historyContent.classList.toggle('hidden');
+            historyToggleIcon.classList.toggle('rotate-180');
+        });
+
+        faqHeader.addEventListener('click', () => {
+            faqContent.classList.toggle('hidden');
+            faqToggleIcon.classList.toggle('rotate-180');
+        });
+
+        async function getChannelStats(url) {
+            const channelId = extractChannelId(url);
+            if (!channelId) {
+                throw new Error("Could not extract channel ID or handle from URL.");
+            }
+            
+            const apiEndpoint = `https://axern.space/api/get?platform=youtube&type=channel&id=${channelId}`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiEndpoint)}`;
+            
+            try {
+                const response = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+                if (!response.ok) {
+                    console.warn(`Proxy/Network error, status: ${response.status}. Falling back.`);
+                    return null;
+                }
+                const data = await response.json();
+
+                if (!data.contents || !data.contents.trim().startsWith('{')) {
+                    console.warn("API response was not valid JSON. Falling back.", data.contents);
+                    return null;
+                }
+
+                const statsData = JSON.parse(data.contents);
+
+                if (statsData.error || typeof statsData.views !== 'number' || typeof statsData.videos !== 'number') {
+                    if(statsData.message && statsData.message.includes("Not found")) {
+                        throw new Error(`频道 "${channelId}" 未找到。请检查链接是否正确。`);
+                    }
+                    console.warn("API returned malformed JSON data. Falling back.", statsData);
+                    return null;
+                }
+                
+                return { totalViews: statsData.views, videoCount: statsData.videos };
+            } catch (error) {
+                console.error("getChannelStats failed:", error);
+                if (error.name === 'SyntaxError') { 
+                    console.warn("Final response could not be parsed as JSON. Falling back.");
+                    return null;
+                }
+                if (error.message.includes("未找到")) {
+                    throw error;
+                }
+                return null;
+            }
+        }
+
+        function extractChannelId(url) {
+            const regex = /youtube\.com\/(?:@|c\/|user\/|channel\/)([\w.-]+)/;
+            const match = url.match(regex);
+            return match ? match[1].replace('@','') : null;
+        }
+
+        function calculateEarningsFromAPI(stats, url) {
+            const { totalViews, videoCount } = stats;
+            if (videoCount === 0) return { monthly: 0, yearly: 0 };
+            const hash = simpleHash(url);
+            const estimatedMonthlyUploads = 2 + (hash % 7);
+            const avgViewsPerVideo = totalViews / videoCount;
+            const monthlyViews = avgViewsPerVideo * estimatedMonthlyUploads;
+            const cpm = 1.5 + ((hash % 700) / 100);
+            const monetizedViews = monthlyViews * 0.5;
+            const monthly = (monetizedViews / 1000) * cpm;
+            return { monthly, yearly: monthly * 12 };
+        }
+        
+        function calculateEarningsFromHash(url) {
+            const hash = simpleHash(url);
+            const monthlyViews = 500000 + (hash % 49500000);
+            const cpm = 1.5 + ((hash % 700) / 100);
+            const monetizedViews = monthlyViews * 0.5;
+            const monthly = (monetizedViews / 1000) * cpm;
+            return { monthly, yearly: monthly * 12 };
+        }
+        
+        async function getGrowthTips(monthlyEarnings, isFirstTime) {
+            geminiResultsContainer.classList.remove('hidden');
+            const geminiLoaderEl = document.getElementById('gemini-loader');
+            geminiLoaderEl.style.display = 'flex';
+            geminiContent.innerHTML = ''; 
+            moreSuggestionsWrapper.classList.add('hidden'); 
+            geminiErrorMessage.classList.add('hidden');
+            
+            const langMap = {'en': 'English', 'zh-CN': 'Simplified Chinese', 'ja': 'Japanese', 'es': 'Spanish', 'fr': 'French', 'ar': 'Arabic', 'ru': 'Russian', 'pt': 'Portuguese', 'ko': 'Korean'};
+            let prompt;
+            if (isFirstTime) {
+                 prompt = `As a YouTube channel growth expert, for a channel with an estimated monthly income of $${monthlyEarnings.toFixed(0)}, list exactly 5 innovative revenue-generating tips. Cover content creation, audience engagement, and monetization. Provide the response in ${langMap[currentLang] || 'English'}. IMPORTANT: Only output the numbered list. Do not include any introductory or concluding text, titles, or summaries.`;
+            } else {
+                 prompt = `For a YouTube channel with an estimated monthly income of $${monthlyEarnings.toFixed(0)}, provide 5 MORE creative and distinct revenue-generating tips, different from common advice and previously generated suggestions. Focus on unique strategies. Provide the response in ${langMap[currentLang] || 'English'}. IMPORTANT: Only output the numbered list. Do not include any introductory or concluding text, titles, or summaries.`;
+            }
+
+            
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            try {
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`API Request Failed: ${response.status}`);
+                const result = await response.json();
+                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    
+                    const tips = text.split('\n').filter(line => /^\s*\d+\./.test(line.trim()));
+                    const newSuggestion = {
+                        timestamp: new Date().toISOString(),
+                        tips: []
+                    };
+                    
+                    if (tips.length > 0) {
+                        const tipsHtml = tips.map(tip => {
+                            const cleanedTip = tip
+                                .replace(/^\s*\d+\.\s*/, '')      
+                                .replace(/\s*\([^)]+\)\s*$/, '') 
+                                .replace(/\*\*/g, '')          
+                                .trim();
+                            newSuggestion.tips.push(cleanedTip); 
+                            return `<li>${cleanedTip.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</li>`;
+                        }).join('');
+                        geminiContent.innerHTML = `<ol class="list-decimal list-inside space-y-2">${tipsHtml}</ol>`;
+                        
+                        suggestionHistory.unshift(newSuggestion);
+                        saveAndRenderHistory();
+                    } else {
+                        throw new Error('Could not parse a valid list from the API response.');
+                    }
+                    moreSuggestionsWrapper.classList.remove('hidden'); 
+                } else { throw new Error('Could not get a valid response from the API.'); }
+            } catch (error) {
+                console.error('Gemini API Error:', error);
+                geminiErrorMessage.textContent = translations[currentLang].geminiError;
+                geminiErrorMessage.classList.remove('hidden');
+            } finally {
+                geminiLoaderEl.style.display = 'none';
+            }
+        }
+
+        function saveAndRenderHistory() {
+            try {
+                localStorage.setItem('yt-growth-tips-history', JSON.stringify(suggestionHistory));
+            } catch (e) {
+                console.error("Failed to save history to localStorage", e);
+            }
+            renderHistory();
+        }
+
+        function renderHistory() {
+            if (suggestionHistory.length === 0) {
+                historySection.classList.add('hidden');
+                return;
+            }
+
+            historySection.classList.remove('hidden');
+            historyContent.innerHTML = ''; 
+
+            suggestionHistory.forEach(entry => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'p-4 bg-slate-50/50 rounded-lg border border-slate-200';
+                
+                const date = new Date(entry.timestamp);
+                const dateString = date.toLocaleString(currentLang, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                const dateEl = document.createElement('p');
+                dateEl.className = 'text-xs text-slate-500 mb-2';
+                dateEl.textContent = dateString;
+                
+                const listEl = document.createElement('ol');
+                listEl.className = 'list-decimal list-inside space-y-2 text-slate-700';
+                listEl.innerHTML = entry.tips.map(tip => `<li>${tip.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</li>`).join('');
+
+                entryDiv.appendChild(dateEl);
+                entryDiv.appendChild(listEl);
+                historyContent.appendChild(entryDiv);
+            });
+        }
+
+
+        function isValidYouTubeUrl(url) {
+            const pattern = /^(https?:\/\/)?(www\.)?youtube\.com\/(?:@|c\/|user\/|channel\/)([\w.-]+)/;
+            return pattern.test(url);
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function clearError() {
+            errorMessage.classList.add('hidden');
+        }
+
+        function showLoading(isLoading) {
+            calculateBtn.disabled = isLoading;
+            const loader = calculateBtn.querySelector('#btn-loader');
+            btnText.style.display = isLoading ? 'none' : 'inline-block';
+            if (loader) {
+                loader.style.display = isLoading ? 'inline-block' : 'none';
+            }
+        }
+
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function displayResults(earnings) {
+            const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            monthlyEarningsEl.textContent = formatter.format(earnings.monthly);
+            yearlyEarningsEl.textContent = formatter.format(earnings.yearly);
+        }
+
+        // --- Initial Load ---
+        const userLang = localStorage.getItem('youtube-calculator-lang') || navigator.language || 'en';
+        const initialLang = supportedLangs.find(lang => userLang.startsWith(lang)) || 'en';
+        setLanguage(initialLang);
+
+        const savedHistory = localStorage.getItem('yt-growth-tips-history');
+        if (savedHistory) {
+            suggestionHistory = JSON.parse(savedHistory);
+            renderHistory();
+        }
+    });
+    </script>
+</body>
+</html>
